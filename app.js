@@ -1,28 +1,60 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-
+var express = require("express");
+var bodyParser = require("body-parser");
+var db = require("./db");
+var config = require("./config");
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+var port = process.env.PORT || 8090;
+var router = express.Router();
 
-app.use("/", require("./routes/index"));
-app.use("/users", require("./routes/users"));
-app.listen(3005, function () {
-  console.log("Store app is running");
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Accept"
+  );
+  next();
+});
+var enableCORS = function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Content-Length, X-Requested-With, *"
+  );
+
+  if ("OPTIONS" == req.method) {
+    res.send(200);
+  } else {
+    next();
+  }
+};
+app.use(enableCORS);
+
+var checkout = require("./routes/Checkout");
+app.use("/checkout", checkout);
+
+app.use(function(req, res, next) {
+  var err = new Error("Not Found");
+  err.status = 404;
+  next(err);
 });
 
-module.exports = app;
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get("env") === "development" ? err : {};
+
+  // render the error page
+  res.status(err.status || 500);
+  res.render("error");
+});
+
+app.listen(config.app.port, "192.168.1.7", () => {
+  console.log("REST API is runnning at " + config.app.port);
+});
