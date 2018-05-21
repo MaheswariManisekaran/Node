@@ -4,41 +4,5 @@ body {
 }
 
 a {
-  color: #00b7ff;
-}
-
-.row-heading {
-  font-weight: 900;
-  text-align: center;
-  color: #00b7ff;
-}
-
-.header {
-  color: #00b7ff;
-  font-size: 2em;
-  font-weight: bolder;
-  text-align: center;
-}
-
-.out-of-stock {
-  background-color: red;
-}
-
-.error {
-  color: red;
-}
-
-.deletemsg,
-.successMsg,
-.cartMsg,
-.success {
-  text-align: center;
-  font-size: 20px;
-  font-weight: bold;
-  color: green;
-}
-
-.not-active {
-  pointer-events: none;
-  color: lightblue;
+  color: #00B7FF;
 }
